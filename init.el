@@ -229,13 +229,6 @@
      (newline)                             ; insert a newline
      (switch-to-buffer nil))               ; return to the initial buffer
 
-(fset 'country
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217788 19 115 104 111 114 116 32 110 97 109 101 60 47 116 100 13 19 60 116 100 62 13 0 19 60 47 116 13 left left left 134217847 134217788 25 58 return 32 32 105 100 58 32 49 return 32 32 110 97 109 101 58 32 25 return 32 32 115 104 111 114 116 58 32 25 return 32 32 105 115 111 58 32 19 73 83 79 32 99 111 100 101 60 47 116 100 62 60 116 100 62 13 0 19 60 47 116 100 13 left left left left 134217847 134217788 19 105 115 111 58 32 13 25 return 32 32 102 105 112 115 58 32 19 102 105 112 115 32 99 111 100 101 60 47 116 100 62 60 116 100 62 13 0 19 60 47 116 100 13 left left left left 134217847 134217788 19 102 105 112 115 58 32 13 25 return 32 32 108 97 110 103 117 97 103 101 115 58 32 19 60 116 100 62 76 97 110 103 117 97 103 101 13 19 60 116 100 62 13 0 19 60 47 116 100 13 left left left left 134217847 134217788 19 108 97 110 103 117 97 103 101 115 58 32 13 25 return 32 32 116 105 109 101 122 111 110 101 58 32 19 116 105 109 101 32 122 111 110 101 60 47 116 100 13 right right right right right 0 19 60 47 116 100 left left left left 134217847 134217788 19 116 105 109 101 122 111 110 101 58 32 13 25 return 32 32 99 97 112 105 116 97 108 32 backspace 58 32 19 99 97 112 105 116 97 108 60 47 116 100 13 right right right right right 0 19 60 47 116 100 13 left left left left 134217847 134217788 19 99 97 112 105 116 97 108 58 32 13 25 return return] 0 "%d")) arg)))
-
-
-(fset 'copycountry
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217788 0 19 99 97 112 105 116 13 5 134217847 24 98 99 111 117 110 116 114 105 101 115 46 121 109 108 return 25 return return] 0 "%d")) arg)))
-
 (put 'downcase-region 'disabled nil)
 
 (kmacro-push-ring (list 'country 0 "%d"))
