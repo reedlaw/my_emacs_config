@@ -6,15 +6,35 @@
 (require 'find-recursive)
 (require 'inf-ruby)
 (require 'ruby-mode)
+(require 'css-mode)
+(require 'autopair)
+   (autopair-global-mode) ;; enable autopair in all buffers 
 (require 'edit-server)
     (edit-server-start)
 (require 'browse-kill-ring)
 (setq auto-mode-alist  (cons '("\\.rb$" . ruby-mode) auto-mode-alist))
 (require 'keywiz)
+(autoload 'js2-mode "js2" nil t)
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.erb\\'" . html-mode))
+(add-to-list 'auto-mode-alist '("\\.php\\'" . html-mode))
+(add-to-list 'auto-mode-alist '("\\.css\\'" . css-mode))
 (add-to-list 'auto-mode-alist '("\\.textile\\'" . textile-mode))
-(autoload 'css-mode "css-mode")
 (set-face-attribute 'default nil :family "Anonymous Pro" :height 140)
+;; auto indent yanked text
+(dolist (command '(yank yank-pop))
+  (eval `(defadvice ,command (after indent-region activate)
+	   (and (not current-prefix-arg)
+		(member major-mode '(emacs-lisp-mode lisp-mode
+						     clojure-mode    scheme-mode
+						     haskell-mode    ruby-mode
+						     rspec-mode      python-mode
+						     c-mode          c++-mode
+						     objc-mode       latex-mode
+						     plain-tex-mode  html-mode
+						     js2-mode        css-mode))
+		(let ((mark-even-if-inactive transient-mark-mode))
+		  (indent-region (region-beginning) (region-end) nil))))))
 ;; I use version control, don't annoy me with backup files everywhere
     (setq make-backup-files nil)
     (setq auto-save-default nil)
