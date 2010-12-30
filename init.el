@@ -6,11 +6,13 @@
 (require 'find-recursive)
 (require 'inf-ruby)
 (require 'ruby-mode)
+(require 'rspec-mode)
 (require 'css-mode)
 (require 'autopair)
-   (autopair-global-mode) ;; enable autopair in all buffers 
+(autopair-global-mode) ;; enable autopair in all buffers 
+(require 'multiple-line-edit)
 (require 'edit-server)
-    (edit-server-start)
+(edit-server-start)
 (require 'browse-kill-ring)
 (setq auto-mode-alist  (cons '("\\.rb$" . ruby-mode) auto-mode-alist))
 (require 'keywiz)
@@ -20,7 +22,18 @@
 (add-to-list 'auto-mode-alist '("\\.php\\'" . html-mode))
 (add-to-list 'auto-mode-alist '("\\.css\\'" . css-mode))
 (add-to-list 'auto-mode-alist '("\\.textile\\'" . textile-mode))
-(set-face-attribute 'default nil :family "Anonymous Pro" :height 140)
+(set-face-attribute 'default nil :family "Anonymous Pro" :height 180)
+;; autoindent in Ruby
+(add-hook 'ruby-mode-hook '(lambda ()
+			     (local-set-key (kbd "RET") 'ruby-reindent-then-newline-and-indent)))
+;; Rails functions
+(defun tmr-devlog-shell ()
+  "Tail the development log, shell"
+  (interactive)
+  (pop-to-buffer (get-buffer-create (generate-new-buffer-name "devlog")))
+  (shell (current-buffer))
+  (process-send-string nil "cd .\n"); makes sure rvm variables set with .rvmrc
+  (process-send-string nil "tail -f log/development.log\n"))
 ;; auto indent yanked text
 (dolist (command '(yank yank-pop))
   (eval `(defadvice ,command (after indent-region activate)
@@ -36,8 +49,19 @@
 		(let ((mark-even-if-inactive transient-mark-mode))
 		  (indent-region (region-beginning) (region-end) nil))))))
 ;; I use version control, don't annoy me with backup files everywhere
-    (setq make-backup-files nil)
-    (setq auto-save-default nil)
+(setq make-backup-files nil)
+(setq auto-save-default nil)
+;; Speedbar
+(require 'sr-speedbar)
+(global-set-key (kbd "s-s") 'sr-speedbar-toggle)
+;; eshell path in Mac
+(defun set-exec-path-from-shell-PATH ()
+  (let ((path-from-shell 
+	 (replace-regexp-in-string "[[:space:]\n]*$" "" 
+				   (shell-command-to-string "$SHELL -l -c 'echo $PATH'"))))
+    (setenv "PATH" path-from-shell)
+    (setq exec-path (split-string path-from-shell path-separator))))
+(when (equal system-type 'darwin) (set-exec-path-from-shell-PATH))
 ;; Ubuntu Gnome tricks
 (menu-bar-enable-clipboard)
 (setq x-select-enable-clipboard t)
@@ -48,15 +72,15 @@
 (global-set-key "\C-cc" 'mode-compile)
 (autoload 'mode-compile-kill "mode-compile" "Command to kill a compilation launched by `mode-compile'" t)
 (global-set-key "\C-ck" 'mode-compile-kill)
- (setq compilation-finish-functions 'compile-autoclose)
- (defun compile-autoclose (buffer string)
-   (cond ((string-match "finished" string)
-          (message "Build maybe successful: closing window.")
-	  (run-with-timer 1 nil                      
-                          'delete-window              
-                          (get-buffer-window buffer t)))
-         (t                                                                    
-          (message "Compilation exited abnormally: %s" string))))
+(setq compilation-finish-functions 'compile-autoclose)
+(defun compile-autoclose (buffer string)
+  (cond ((string-match "finished" string)
+	 (message "Build maybe successful: closing window.")
+	 (run-with-timer 1 nil                      
+			 'delete-window              
+			 (get-buffer-window buffer t)))
+	(t                                                                    
+	 (message "Compilation exited abnormally: %s" string))))
 ;; Color theme
 (setq load-path (cons "~/.emacs.d/plugins/color-theme" load-path))
 (require 'color-theme)
@@ -102,7 +126,7 @@
   (switch-to-buffer cur)
   (delete-other-windows)
   (c-electric-backspace)
-)
+  )
 
 (require 'http-post-simple)
 (require 'url-auth)
@@ -114,7 +138,7 @@
 (defun get-parms ()
   (list (cons 'post%5Bbody%5D (buffer-string))
 	(cons 'post%5Btitle%5D (read-from-minibuffer "Post title: "))))
-	
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -155,7 +179,7 @@
 	     (window-buffer
 	      (frame-selected-window x))))
 	  (visible-frame-list)))
-))
+   ))
 
 (defun tab-next (ls)
   "Switch to next buffer while skipping unwanted ones."
@@ -183,17 +207,18 @@
   (bury-buffer (current-buffer))
   (tab-next (buffer-list)))
 (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(nxhtml-skip-welcome t)
+ '(speedbar-show-unknown-files t)
  '(weblogger-config-alist (quote (("chinagoer" ("user" . "reedlaw") ("server-url" . "http://www.chinagoer.com/xmlrpc.php") ("weblog" . "1"))))))
 (custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  )
 
 (put 'upcase-region 'disabled nil)
@@ -209,25 +234,25 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun increment-number-at-point ()
-      (interactive)
-      (skip-chars-backward "0123456789")
-      (or (looking-at "[0123456789]+")
-          (error "No number at point"))
-      (replace-match (number-to-string (1+ (string-to-number (match-string 0))))))
+  (interactive)
+  (skip-chars-backward "0123456789")
+  (or (looking-at "[0123456789]+")
+      (error "No number at point"))
+  (replace-match (number-to-string (1+ (string-to-number (match-string 0))))))
 (global-set-key (kbd "C-c +") 'increment-number-at-point)
 
 (defun save-macro (name)                  
-    "save a macro. Take a name as argument
+  "save a macro. Take a name as argument
      and save the last defined macro under 
      this name at the end of your .emacs"
-     (interactive "SName of the macro :")  ; ask for the name of the macro    
-     (kmacro-name-last-macro name)         ; use this name for the macro    
-     (find-file "~/.emacs.d/init.el")                ; open the .emacs file 
-     (goto-char (point-max))               ; go to the end of the .emacs
-     (newline)                             ; insert a newline
-     (insert-kbd-macro name)               ; copy the macro 
-     (newline)                             ; insert a newline
-     (switch-to-buffer nil))               ; return to the initial buffer
+  (interactive "SName of the macro :")  ; ask for the name of the macro    
+  (kmacro-name-last-macro name)         ; use this name for the macro    
+  (find-file "~/.emacs.d/init.el")                ; open the .emacs file 
+  (goto-char (point-max))               ; go to the end of the .emacs
+  (newline)                             ; insert a newline
+  (insert-kbd-macro name)               ; copy the macro 
+  (newline)                             ; insert a newline
+  (switch-to-buffer nil))               ; return to the initial buffer
 
 (put 'downcase-region 'disabled nil)
 
