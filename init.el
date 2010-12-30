@@ -6,6 +6,8 @@
 (require 'find-recursive)
 (require 'inf-ruby)
 (require 'ruby-mode)
+(add-to-list 'load-path "~/.emacs.d/plugins/rinari")
+(require 'rinari)
 (require 'rspec-mode)
 (require 'css-mode)
 (require 'autopair)
