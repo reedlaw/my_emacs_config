@@ -24,7 +24,7 @@
 (add-to-list 'auto-mode-alist '("\\.php\\'" . html-mode))
 (add-to-list 'auto-mode-alist '("\\.css\\'" . css-mode))
 (add-to-list 'auto-mode-alist '("\\.textile\\'" . textile-mode))
-(set-face-attribute 'default nil :family "Anonymous Pro" :height 180)
+(set-face-attribute 'default nil :family "Anonymous Pro" :height 140)
 ;; autoindent in Ruby
 (add-hook 'ruby-mode-hook '(lambda ()
 			     (local-set-key (kbd "RET") 'ruby-reindent-then-newline-and-indent)))
@@ -55,7 +55,7 @@
 (setq auto-save-default nil)
 ;; Speedbar
 (require 'sr-speedbar)
-(global-set-key (kbd "s-s") 'sr-speedbar-toggle)
+(global-set-key (kbd "C-c s") 'sr-speedbar-toggle)
 ;; eshell path in Mac
 (defun set-exec-path-from-shell-PATH ()
   (let ((path-from-shell 
@@ -87,7 +87,7 @@
 (setq load-path (cons "~/.emacs.d/plugins/color-theme" load-path))
 (require 'color-theme)
 (color-theme-initialize)
-(load-file "~/.emacs.d/color-theme-bleu.el")
+(load-file "~/.emacs.d/color-theme-tangotango.el")
 (setq send-mail-function 'smtpmail-send-it
       message-send-mail-function 'smtpmail-send-it
       smtpmail-starttls-credentials
@@ -104,7 +104,7 @@
 (scroll-bar-mode -1)
 (fset 'yes-or-no-p 'y-or-n-p)
 (setq inhibit-startup-message t)
-(color-theme-bleu)
+(color-theme-tangotango)
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 (ido-mode 'files)
 
