@@ -2,7 +2,10 @@
 (require 'textile-mode)
 (require 'weblogger)
 (require 'yasnippet-bundle)
-(require 'snippet)
+;; Develop and keep personal snippets under ~/emacs.d/mysnippets
+(setq yas/root-directory "~/.emacs.d/mysnippets")
+;; Load the snippets
+(yas/load-directory yas/root-directory)
 (require 'find-recursive)
 (require 'inf-ruby)
 (require 'ruby-mode)
@@ -10,9 +13,12 @@
 (require 'rinari)
 (require 'rspec-mode)
 (require 'css-mode)
-(require 'autopair)
-(autopair-global-mode) ;; enable autopair in all buffers 
+					;(require 'autopair)
+					;(require 'auto-pair+)
+					;(autopair-global-mode) ;; enable autopair in all buffers 
 (require 'multiple-line-edit)
+(global-set-key "\C-c>" 'mulled/edit-trailing-edges)
+(global-set-key "\C-c<" 'mulled/edit-leading-edges)
 (require 'edit-server)
 (edit-server-start)
 (require 'browse-kill-ring)
@@ -24,7 +30,7 @@
 (add-to-list 'auto-mode-alist '("\\.php\\'" . html-mode))
 (add-to-list 'auto-mode-alist '("\\.css\\'" . css-mode))
 (add-to-list 'auto-mode-alist '("\\.textile\\'" . textile-mode))
-(set-face-attribute 'default nil :family "Anonymous Pro" :height 140)
+(set-face-attribute 'default nil :family "Anonymous Pro" :height 180)
 ;; autoindent in Ruby
 (add-hook 'ruby-mode-hook '(lambda ()
 			     (local-set-key (kbd "RET") 'ruby-reindent-then-newline-and-indent)))
