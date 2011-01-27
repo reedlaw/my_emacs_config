@@ -13,9 +13,10 @@
 (require 'rinari)
 (require 'rspec-mode)
 (require 'css-mode)
-					;(require 'autopair)
-					;(require 'auto-pair+)
-					;(autopair-global-mode) ;; enable autopair in all buffers 
+;; Color theme
+(add-to-list 'load-path "~/.emacs.d/plugins/color-theme")
+(require 'color-theme)
+(require 'color-theme-tangotango)
 (require 'multiple-line-edit)
 (global-set-key "\C-c>" 'mulled/edit-trailing-edges)
 (global-set-key "\C-c<" 'mulled/edit-leading-edges)
@@ -89,11 +90,6 @@
 			 (get-buffer-window buffer t)))
 	(t                                                                    
 	 (message "Compilation exited abnormally: %s" string))))
-;; Color theme
-(setq load-path (cons "~/.emacs.d/plugins/color-theme" load-path))
-(require 'color-theme)
-(color-theme-initialize)
-(load-file "~/.emacs.d/color-theme-tangotango.el")
 (setq send-mail-function 'smtpmail-send-it
       message-send-mail-function 'smtpmail-send-it
       smtpmail-starttls-credentials
