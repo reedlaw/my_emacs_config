@@ -12,14 +12,20 @@
 (add-to-list 'load-path "~/.emacs.d/plugins/rinari")
 (require 'rinari)
 (require 'rspec-mode)
+(add-to-list 'load-path "~/.emacs.d/plugins/cucumber")
+(require 'feature-mode)
+(add-to-list 'auto-mode-alist '("\.feature$" . feature-mode))
+(require 'php-mode)
+(add-to-list 'load-path "~/.emacs.d/plugins/git-emacs")
+(require 'git-emacs)
 (require 'css-mode)
 ;; Color theme
 (add-to-list 'load-path "~/.emacs.d/plugins/color-theme")
 (require 'color-theme)
 (require 'color-theme-tangotango)
 (require 'multiple-line-edit)
-(global-set-key "\C-c>" 'mulled/edit-trailing-edges)
-(global-set-key "\C-c<" 'mulled/edit-leading-edges)
+(global-set-key "\C-c]" 'mulled/edit-trailing-edges)
+(global-set-key "\C-c[" 'mulled/edit-leading-edges)
 (require 'edit-server)
 (edit-server-start)
 (require 'browse-kill-ring)
@@ -28,7 +34,7 @@
 (autoload 'js2-mode "js2" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.erb\\'" . html-mode))
-(add-to-list 'auto-mode-alist '("\\.php\\'" . html-mode))
+(add-to-list 'auto-mode-alist '("\\.php\\'" . php-mode))
 (add-to-list 'auto-mode-alist '("\\.css\\'" . css-mode))
 (add-to-list 'auto-mode-alist '("\\.textile\\'" . textile-mode))
 (set-face-attribute 'default nil :family "Anonymous Pro" :height 180)
@@ -43,20 +49,6 @@
   (shell (current-buffer))
   (process-send-string nil "cd .\n"); makes sure rvm variables set with .rvmrc
   (process-send-string nil "tail -f log/development.log\n"))
-;; auto indent yanked text
-(dolist (command '(yank yank-pop))
-  (eval `(defadvice ,command (after indent-region activate)
-	   (and (not current-prefix-arg)
-		(member major-mode '(emacs-lisp-mode lisp-mode
-						     clojure-mode    scheme-mode
-						     haskell-mode    ruby-mode
-						     rspec-mode      python-mode
-						     c-mode          c++-mode
-						     objc-mode       latex-mode
-						     plain-tex-mode  html-mode
-						     js2-mode        css-mode))
-		(let ((mark-even-if-inactive transient-mark-mode))
-		  (indent-region (region-beginning) (region-end) nil))))))
 ;; I use version control, don't annoy me with backup files everywhere
 (setq make-backup-files nil)
 (setq auto-save-default nil)
@@ -263,3 +255,13 @@
 (kmacro-push-ring (list 'country 0 "%d"))
 (kmacro-pop-ring)
 
+(defun emacs-uri-handler (uri)
+  "Handles emacs URIs in the form: emacs:///path/to/file/LINENUM"
+  (save-match-data
+    (if (string-match "emacs://\\(.*\\)/\\([0-9]+\\)$" uri)
+        (let ((filename (match-string 1 uri))
+              (linenum (match-string 2 uri)))
+          (with-current-buffer (find-file filename)
+            (goto-line (string-to-number linenum))))
+      (beep)
+      (message "Unable to parse the URI <%s>"  uri))))
