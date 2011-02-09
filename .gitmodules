@@ -1,0 +1,9 @@
+[submodule "plugins/cucumber"]
+	path = plugins/cucumber
+	url = https://github.com/michaelklishin/cucumber.el.git
+[submodule "plugins/rinari"]
+	path = plugins/rinari
+	url = https://github.com/eschulte/rinari.git
+[submodule "plugins/git-emacs"]
+	path = plugins/git-emacs
+	url = https://github.com/tsgates/git-emacs.git
