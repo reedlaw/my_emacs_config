@@ -24,13 +24,23 @@
 (require 'color-theme)
 (require 'color-theme-tangotango)
 (require 'multiple-line-edit)
-(global-set-key "\C-c]" 'mulled/edit-trailing-edges)
-(global-set-key "\C-c[" 'mulled/edit-leading-edges)
-(require 'edit-server)
-(edit-server-start)
 (require 'browse-kill-ring)
 (setq auto-mode-alist  (cons '("\\.rb$" . ruby-mode) auto-mode-alist))
 (require 'keywiz)
+(autoload 'igrep "igrep"
+   "*Run `grep` PROGRAM to match REGEX in FILES..." t)
+(autoload 'igrep-find "igrep"
+   "*Run `grep` via `find`..." t)
+(autoload 'igrep-visited-files "igrep"
+   "*Run `grep` ... on all visited files." t)
+(autoload 'dired-do-igrep "igrep"
+   "*Run `grep` on the marked (or next prefix ARG) files." t)
+(autoload 'dired-do-igrep-find "igrep"
+   "*Run `grep` via `find` on the marked (or next prefix ARG) directories." t)
+(autoload 'Buffer-menu-igrep "igrep"
+  "*Run `grep` on the files visited in buffers marked with '>'." t)
+(autoload 'igrep-insinuate "igrep"
+  "Define `grep' aliases for the corresponding `igrep' commands." t)
 (autoload 'js2-mode "js2" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.erb\\'" . html-mode))
@@ -47,7 +57,7 @@
   (interactive)
   (pop-to-buffer (get-buffer-create (generate-new-buffer-name "devlog")))
   (shell (current-buffer))
-  (process-send-string nil "cd .\n"); makes sure rvm variables set with .rvmrc
+  (process-send-string nil "cd .\n") ; makes sure rvm variables set with .rvmrc
   (process-send-string nil "tail -f log/development.log\n"))
 ;; I use version control, don't annoy me with backup files everywhere
 (setq make-backup-files nil)
@@ -135,6 +145,36 @@
   (list (cons 'post%5Bbody%5D (buffer-string))
 	(cons 'post%5Btitle%5D (read-from-minibuffer "Post title: "))))
 
+(defun handle-link (uri)
+  "Handles emacs URIs in the form: emacs:///path/to/file/LINENUM"
+  (save-match-data
+    (if (string-match "emacs://\\(.*\\)/\\([0-9]+\\)$" uri)
+        (let ((filename (match-string 1 uri))
+              (linenum (match-string 2 uri)))
+          (while (string-match "\\(%20\\)" filename)
+            (setq filename (replace-match " " nil t filename 1)))
+          (with-current-buffer (find-file filename)
+            (goto-line (string-to-number linenum))))
+      (beep)
+      (message "Unable to parse the URI <%s>"  uri))))
+
+(defun remove-dos-eol ()
+  "Removes the disturbing '^M' showing up in files containing mixed UNIX and DOS line endings."
+  (interactive)
+  (setq buffer-display-table (make-display-table))
+  (aset buffer-display-table ?\^M []))
+
+(defun find-grep-dired-do-search (dir regexp)
+  "First perform `find-grep-dired', and wait for it to finish.
+Then, using the same REGEXP as provided to `find-grep-dired',
+perform `dired-do-search' on all files in the *Find* buffer."
+  (interactive "DFind-grep (directory): \nsFind-grep (grep regexp): ")
+  (find-grep-dired dir regexp)
+  (while (get-buffer-process (get-buffer "*Find*"))
+    (sit-for 1))
+  (with-current-buffer "*Find*"
+    (dired-toggle-marks)
+    (dired-do-search regexp)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -152,6 +192,14 @@
 (global-set-key [f5] 'textilized-preview)
 (windmove-default-keybindings 'shift)
 (global-set-key (kbd "C-c k") 'browse-kill-ring)
+(global-set-key (kbd "C-c f") 'find-grep-dired-do-search)
+(global-set-key (kbd "C-c e") 'eval-buffer)
+(global-set-key (kbd "C-c r") 'replace-string)
+(global-set-key (kbd "C-c d") 'remove-dos-eol)
+(global-set-key "\C-c]" 'mulled/edit-trailing-edges)
+(global-set-key "\C-c[" 'mulled/edit-leading-edges)
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; TAB BROWSING
@@ -207,6 +255,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(mac-option-modifier (quote meta))
  '(nxhtml-skip-welcome t)
  '(speedbar-show-unknown-files t)
  '(weblogger-config-alist (quote (("chinagoer" ("user" . "reedlaw") ("server-url" . "http://www.chinagoer.com/xmlrpc.php") ("weblog" . "1"))))))
@@ -241,27 +290,20 @@
   "save a macro. Take a name as argument
      and save the last defined macro under 
      this name at the end of your .emacs"
-  (interactive "SName of the macro :")  ; ask for the name of the macro    
-  (kmacro-name-last-macro name)         ; use this name for the macro    
-  (find-file "~/.emacs.d/init.el")                ; open the .emacs file 
-  (goto-char (point-max))               ; go to the end of the .emacs
-  (newline)                             ; insert a newline
-  (insert-kbd-macro name)               ; copy the macro 
-  (newline)                             ; insert a newline
-  (switch-to-buffer nil))               ; return to the initial buffer
+  (interactive "SName of the macro :") ; ask for the name of the macro    
+  (kmacro-name-last-macro name)	     ; use this name for the macro    
+  (find-file "~/.emacs.d/init.el")   ; open the .emacs file 
+  (goto-char (point-max))	     ; go to the end of the .emacs
+  (newline)			     ; insert a newline
+  (insert-kbd-macro name)	     ; copy the macro 
+  (newline)			     ; insert a newline
+  (switch-to-buffer nil))	     ; return to the initial buffer
 
 (put 'downcase-region 'disabled nil)
 
 (kmacro-push-ring (list 'country 0 "%d"))
 (kmacro-pop-ring)
 
-(defun emacs-uri-handler (uri)
-  "Handles emacs URIs in the form: emacs:///path/to/file/LINENUM"
-  (save-match-data
-    (if (string-match "emacs://\\(.*\\)/\\([0-9]+\\)$" uri)
-        (let ((filename (match-string 1 uri))
-              (linenum (match-string 2 uri)))
-          (with-current-buffer (find-file filename)
-            (goto-line (string-to-number linenum))))
-      (beep)
-      (message "Unable to parse the URI <%s>"  uri))))
+(server-start)
+
+(setq emerge-diff-options "--ignore-all-space")
