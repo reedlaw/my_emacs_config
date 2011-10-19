@@ -13,6 +13,9 @@
 
 (setq-default tab-width 2)
 
+;; Prevent emacs from adding # -*- coding: utf-8 -* at the top of files
+(setq ruby-insert-encoding-magic-comment nil)
+
 (setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
 (setq exec-path
       '(
