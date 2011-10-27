@@ -11,7 +11,7 @@
   (package-refresh-contents))
 
 ;; Add in your own as you wish:
-(defvar my-packages '(starter-kit starter-kit-lisp starter-kit-bindings)
+(defvar my-packages '(starter-kit starter-kit-lisp)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)

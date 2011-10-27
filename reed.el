@@ -223,6 +223,9 @@
   (setq buffer-display-table (make-display-table))
   (aset buffer-display-table ?\^M []))
 
+(setenv "PATH" (concat (getenv "PATH") ":/bin"))
+(setq exec-path (append exec-path '("/bin")))
+
 (defun find-grep-dired-do-search (dir regexp)
   "First perform `find-grep-dired', and wait for it to finish.
 Then, using the same REGEXP as provided to `find-grep-dired',
