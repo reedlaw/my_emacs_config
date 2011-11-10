@@ -1,5 +1,6 @@
 (setq nobreak-char-display nil)
-
+(add-to-list 'load-path "/home/reed/.emacs.d/reed/git-emacs")
+(require 'git-emacs)
 (require 'multiple-line-edit)
 
 (global-set-key (kbd "C-c s") 'speedbar-toggle)
