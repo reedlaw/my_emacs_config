@@ -2,12 +2,15 @@
 (add-to-list 'load-path "/home/reed/.emacs.d/reed/git-emacs")
 (require 'git-emacs)
 (require 'multiple-line-edit)
+(require 'multi-term)
+(setq multi-term-program "/bin/bash")
 
 (global-set-key (kbd "C-c s") 'speedbar-toggle)
 
 ;; Set up look
 (load-theme 'tango-dark)
-(set-face-attribute 'default nil :family "Anonymous Pro" :height 160)
+
+(set-face-attribute 'default nil :family "Anonymous Pro" :height 150)
 
 ;; Auto revert buffers
 (global-auto-revert-mode)
@@ -136,24 +139,6 @@
 
 (put 'narrow-to-region 'disabled nil)
 
- (global-set-key [f7] 'alt-shell-dwim)
- (defun alt-shell-dwim (arg)
-   "Run an inferior shell like `shell'. If an inferior shell as its I/O
- through the current buffer, then pop the next buffer in `buffer-list'
- whose name is generated from the string \"*shell*\". When called with
- an argument, start a new inferior shell whose I/O will go to a buffer
- named after the string \"*shell*\" using `generate-new-buffer-name'."
-   (interactive "P")
-   (let* ((shell-buffer-list
- 	  (let (blist)
-	     (dolist (buff (buffer-list) blist)
-	       (when (string-match "^\\*shell\\*" (buffer-name buff))
-	 	(setq blist (cons buff blist))))))
-	  (name (if arg
-	 	   (generate-new-buffer-name "*shell*")
-	 	 (car shell-buffer-list))))
-     (shell name)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; Macros
@@ -180,6 +165,11 @@
   (insert-kbd-macro name)	     ; copy the macro 
   (newline)			     ; insert a newline
   (switch-to-buffer nil))	     ; return to the initial buffer
+
+(defun switch-to-terminal ()
+  "Switch to terminal buffer"
+  (interactive)
+  (switch-to-buffer (get-buffer "*terminal*")))
 
 (put 'downcase-region 'disabled nil)
 
