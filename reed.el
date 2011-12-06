@@ -1,7 +1,23 @@
 (setq nobreak-char-display nil)
-(add-to-list 'load-path "/home/reed/.emacs.d/reed/git-emacs")
+(add-to-list 'load-path "~/.emacs.d/reed/git-emacs")
 (require 'git-emacs)
 (require 'multiple-line-edit)
+
+(add-to-list 'load-path "~/.emacs.d/reed/coffee-mode")
+(require 'coffee-mode)
+
+(setq skype--my-user-handle "reedglaw")
+
+(defun my-skype-dial-number ()
+  "Dial the number (maybe from the region). Assumes USA and adds '+1'."
+  (interactive)
+  (let* ((number-to-dial
+         (if (and transient-mark-mode mark-active)
+             (buffer-substring (region-beginning) (region-end))
+           (read-from-minibuffer "Number to skype: ")))
+         (clean-number
+          (replace-regexp-in-string "[^0-9]" "" number-to-dial)))
+    (skype--start-call (concat "+1" clean-number))))
 
 (global-set-key (kbd "C-c s") 'speedbar-toggle)
 
