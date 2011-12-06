@@ -2,6 +2,8 @@
 (add-to-list 'load-path "~/.emacs.d/reed/git-emacs")
 (require 'git-emacs)
 (require 'multiple-line-edit)
+(require 'multi-term)
+(setq multi-term-program "/bin/bash")
 
 (add-to-list 'load-path "~/.emacs.d/reed/coffee-mode")
 (require 'coffee-mode)
@@ -23,7 +25,8 @@
 
 ;; Set up look
 (load-theme 'tango-dark)
-(set-face-attribute 'default nil :family "Anonymous Pro" :height 160)
+
+(set-face-attribute 'default nil :family "Anonymous Pro" :height 150)
 
 ;; Auto revert buffers
 (global-auto-revert-mode)
@@ -146,11 +149,6 @@
  ;; If there is more than one, they won't work right.
  )
 
-(defun switch-to-terminal ()
-  "Switch to terminal buffer"
-  (interactive)
-  (switch-to-buffer (get-buffer "*terminal*")))
-
 (put 'upcase-region 'disabled nil)
 
 (put 'erase-buffer 'disabled nil)
@@ -183,6 +181,11 @@
   (insert-kbd-macro name)	     ; copy the macro 
   (newline)			     ; insert a newline
   (switch-to-buffer nil))	     ; return to the initial buffer
+
+(defun switch-to-terminal ()
+  "Switch to terminal buffer"
+  (interactive)
+  (switch-to-buffer (get-buffer "*terminal*")))
 
 (put 'downcase-region 'disabled nil)
 
