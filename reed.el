@@ -8,18 +8,12 @@
 (add-to-list 'load-path "~/.emacs.d/reed/coffee-mode")
 (require 'coffee-mode)
 
-(setq skype--my-user-handle "reedglaw")
+(defun coffee-custom ()
+  "coffee-mode-hook"
+ (set (make-local-variable 'tab-width) 2))
 
-(defun my-skype-dial-number ()
-  "Dial the number (maybe from the region). Assumes USA and adds '+1'."
-  (interactive)
-  (let* ((number-to-dial
-         (if (and transient-mark-mode mark-active)
-             (buffer-substring (region-beginning) (region-end))
-           (read-from-minibuffer "Number to skype: ")))
-         (clean-number
-          (replace-regexp-in-string "[^0-9]" "" number-to-dial)))
-    (skype--start-call (concat "+1" clean-number))))
+(add-hook 'coffee-mode-hook
+  '(lambda() (coffee-custom)))
 
 (global-set-key (kbd "C-c s") 'speedbar-toggle)
 
