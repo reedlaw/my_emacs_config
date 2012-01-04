@@ -31,6 +31,13 @@
 (add-to-list 'load-path "/home/reed/.emacs.d/reed/coffee-mode")
 (require 'coffee-mode)
 
+(defun coffee-custom ()
+  "coffee-mode-hook"
+ (set (make-local-variable 'tab-width) 2))
+
+(add-hook 'coffee-mode-hook
+  '(lambda() (coffee-custom)))
+
 (global-set-key (kbd "C-c s") 'speedbar-toggle)
 
 ;; Set up look
