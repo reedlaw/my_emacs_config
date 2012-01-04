@@ -1,25 +1,35 @@
 (setq nobreak-char-display nil)
-(add-to-list 'load-path "~/.emacs.d/reed/git-emacs")
+(add-to-list 'load-path "/home/reed/.emacs.d/reed/git-emacs")
 (require 'git-emacs)
 (require 'multiple-line-edit)
 (require 'multi-term)
 (setq multi-term-program "/bin/bash")
 
-(add-to-list 'load-path "~/.emacs.d/reed/coffee-mode")
+(require 'key-chord)
+(key-chord-mode 1)
+(key-chord-define-global "hj"     'undo)
+(key-chord-define-global ",."     "<>\C-b")
+(key-chord-define-global "90"     "()\C-b")
+(key-chord-define-global "[]"     "{}\C-b")
+(key-chord-define-global "fg"     'iy-go-to-char)
+(key-chord-define-global "df"     'iy-go-to-char-backward)
+  
+(add-to-list 'load-path "/home/reed/.emacs.d/reed/mark-multiple")
+(require 'inline-string-rectangle)
+(global-set-key (kbd "C-x r t") 'inline-string-rectangle)
+ 
+(require 'mark-more-like-this)
+(global-set-key (kbd "C-<") 'mark-previous-like-this)
+(global-set-key (kbd "C->") 'mark-next-like-this)
+(global-set-key (kbd "C-M-m") 'mark-more-like-this) ; like the other
+                                        ; two, but takes an argument
+                                        ; (negative is previous)
+
+(require 'rename-sgml-tag)
+(global-set-key (kbd "C-c C-r") 'rename-sgml-tag)
+
+(add-to-list 'load-path "/home/reed/.emacs.d/reed/coffee-mode")
 (require 'coffee-mode)
-
-(setq skype--my-user-handle "reedglaw")
-
-(defun my-skype-dial-number ()
-  "Dial the number (maybe from the region). Assumes USA and adds '+1'."
-  (interactive)
-  (let* ((number-to-dial
-         (if (and transient-mark-mode mark-active)
-             (buffer-substring (region-beginning) (region-end))
-           (read-from-minibuffer "Number to skype: ")))
-         (clean-number
-          (replace-regexp-in-string "[^0-9]" "" number-to-dial)))
-    (skype--start-call (concat "+1" clean-number))))
 
 (global-set-key (kbd "C-c s") 'speedbar-toggle)
 

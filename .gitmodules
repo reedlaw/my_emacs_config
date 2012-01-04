@@ -1,0 +1,3 @@
+[submodule "reed/mark-multiple"]
+	path = reed/mark-multiple
+	url = https://github.com/magnars/mark-multiple.el.git
