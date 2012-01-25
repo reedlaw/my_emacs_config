@@ -6,6 +6,7 @@
 (setq multi-term-program "/bin/bash")
 
 (require 'key-chord)
+(require 'iy-go-to-char)
 (key-chord-mode 1)
 (key-chord-define-global "hj"     'undo)
 (key-chord-define-global ",."     "<>\C-b")
@@ -38,7 +39,16 @@
 (add-hook 'coffee-mode-hook
   '(lambda() (coffee-custom)))
 
+(add-to-list 'auto-mode-alist '(".rake$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Rakefile$" . ruby-mode))
+(add-to-list 'auto-mode-alist '(".gemspec$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Gemfile$" . ruby-mode))
+
 (global-set-key (kbd "C-c s") 'speedbar-toggle)
+
+(require 'yasnippet) ;; not yasnippet-bundle
+(yas/global-mode 1)
+(yas/load-directory "~/.emacs.d/elpa/yasnippet-0.6.1/snippets/")
 
 ;; Set up look
 (load-theme 'tango-dark)
@@ -236,7 +246,6 @@
 ;;
 ;; My own functions
 ;;
-;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun textilized-preview ()
@@ -274,3 +283,22 @@ perform `dired-do-search' on all files in the *Find* buffer."
   (with-current-buffer "*Find*"
     (dired-toggle-marks)
     (dired-do-search regexp)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Functions I found online
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;; from http://superuser.com/a/176629
+(defun dired-do-command (command)
+  "Run COMMAND on marked files. Any files not already open will be opened.
+After this command has been run, any buffers it's modified will remain
+open and unsaved."
+  (interactive "CRun on marked files M-x ")
+  (save-window-excursion
+    (mapc (lambda (filename)
+            (find-file filename)
+            (call-interactively command))
+          (dired-get-marked-files))))
