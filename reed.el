@@ -97,6 +97,10 @@
 (global-set-key "\C-c[" 'mulled/edit-leading-edges)
 (global-set-key (kbd "C-x C-b") 'bs-show)
 (global-set-key (kbd "C-t") 'switch-to-terminal)
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-cc" 'org-capture)
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cb" 'org-iswitchb)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
