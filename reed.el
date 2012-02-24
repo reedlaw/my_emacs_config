@@ -5,6 +5,9 @@
 (require 'multi-term)
 (setq multi-term-program "/bin/bash")
 
+(add-to-list 'load-path "~/.emacs.d/reed/mustache-mode.el")
+(require 'mustache-mode)
+
 (require 'key-chord)
 (require 'iy-go-to-char)
 (key-chord-mode 1)
