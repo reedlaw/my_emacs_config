@@ -8,6 +8,11 @@
 (add-to-list 'load-path "~/.emacs.d/reed/mustache-mode.el")
 (require 'mustache-mode)
 
+(add-to-list 'load-path "~/.emacs.d/reed/scss-mode.el")
+(autoload 'scss-mode "scss-mode")
+(add-to-list 'auto-mode-alist '(".scss" . scss-mode))
+(setq scss-compile-at-save 'nil)
+
 (require 'key-chord)
 (require 'iy-go-to-char)
 (key-chord-mode 1)
