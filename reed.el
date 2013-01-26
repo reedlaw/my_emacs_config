@@ -5,6 +5,9 @@
 (require 'multi-term)
 (setq multi-term-program "/bin/bash")
 
+(setq c-default-style "linux"
+      c-basic-offset 4)
+
 (add-to-list 'load-path "~/.emacs.d/reed/mustache-mode.el")
 (require 'mustache-mode)
 
@@ -12,6 +15,9 @@
 (autoload 'scss-mode "scss-mode")
 (add-to-list 'auto-mode-alist '(".scss" . scss-mode))
 (setq scss-compile-at-save 'nil)
+
+(add-to-list 'auto-mode-alist '(".php" . php-mode))
+(add-to-list 'auto-mode-alist '(".inc" . php-mode))
 
 (require 'key-chord)
 (require 'iy-go-to-char)
@@ -22,11 +28,11 @@
 (key-chord-define-global "[]"     "{}\C-b")
 (key-chord-define-global "fg"     'iy-go-to-char)
 (key-chord-define-global "df"     'iy-go-to-char-backward)
-  
+
 (add-to-list 'load-path "/home/reed/.emacs.d/reed/mark-multiple")
 (require 'inline-string-rectangle)
 (global-set-key (kbd "C-x r t") 'inline-string-rectangle)
- 
+
 (require 'mark-more-like-this)
 (global-set-key (kbd "C-<") 'mark-previous-like-this)
 (global-set-key (kbd "C->") 'mark-next-like-this)
@@ -42,10 +48,10 @@
 
 (defun coffee-custom ()
   "coffee-mode-hook"
- (set (make-local-variable 'tab-width) 2))
+  (set (make-local-variable 'tab-width) 2))
 
 (add-hook 'coffee-mode-hook
-  '(lambda() (coffee-custom)))
+          '(lambda() (coffee-custom)))
 
 (add-to-list 'auto-mode-alist '(".rake$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Rakefile$" . ruby-mode))
@@ -74,10 +80,10 @@
 (setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
 (setq exec-path
       '(
-    "/usr/local/bin"
-    "/usr/bin"
-    "/home/reed/local/node/bin/node"
-    ))
+        "/usr/local/bin"
+        "/usr/bin"
+        "/home/reed/local/node/bin/node"
+        ))
 
 (setq debug-on-error nil)
 (setq no-debug t)
@@ -106,7 +112,8 @@
 (global-set-key [f4] 'buffer-menu)
 (global-set-key [f5] 'textilized-preview)
 (windmove-default-keybindings 'shift)
-(global-set-key (kbd "C-c k") 'browse-kill-ring)
+(global-set-key (kbd "C-c k") 'delete-this-buffer-and-file)
+(global-set-key (kbd "C-c m") 'rename-this-buffer-and-file)
 (global-set-key (kbd "C-c f") 'find-grep-dired-do-search)
 (global-set-key (kbd "C-c e") 'eval-buffer)
 (global-set-key (kbd "C-c r") 'replace-string)
@@ -119,7 +126,8 @@
 (global-set-key "\C-cc" 'org-capture)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
-
+(global-set-key (kbd "C-@") 'er/expand-region)
+(global-set-key (kbd "C-0") 'ace-jump-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -139,28 +147,28 @@
    (string-match "^ " str)
 
    (memq str
-	 (mapcar
-	  (lambda (x)
-	    (buffer-name
-	     (window-buffer
-	      (frame-selected-window x))))
-	  (visible-frame-list)))
+         (mapcar
+          (lambda (x)
+            (buffer-name
+             (window-buffer
+              (frame-selected-window x))))
+          (visible-frame-list)))
    ))
 
 (defun tab-next (ls)
   "Switch to next buffer while skipping unwanted ones."
   (let* ((ptr ls)
-	 bf bn go
-	 )
+         bf bn go
+         )
     (while (and ptr (null go))
       (setq bf (car ptr)  bn (buffer-name bf))
       (if (null (tab-next-ignore bn))
-	  (setq go bf)
-	(setq ptr (cdr ptr))
-	)
+          (setq go bf)
+        (setq ptr (cdr ptr))
+        )
       )
     (if go
-	(switch-to-buffer go))))
+        (switch-to-buffer go))))
 
 (defun tab-prev-buffer ()
   "Switch to previous buffer in current window."
@@ -208,18 +216,18 @@
   (replace-match (number-to-string (1+ (string-to-number (match-string 0))))))
 (global-set-key (kbd "C-c +") 'increment-number-at-point)
 
-(defun save-macro (name)                  
+(defun save-macro (name)
   "save a macro. Take a name as argument
-     and save the last defined macro under 
+     and save the last defined macro under
      this name at the end of your .emacs"
-  (interactive "SName of the macro :") ; ask for the name of the macro    
-  (kmacro-name-last-macro name)	     ; use this name for the macro    
-  (find-file "~/.emacs.d/init.el")   ; open the .emacs file 
-  (goto-char (point-max))	     ; go to the end of the .emacs
-  (newline)			     ; insert a newline
-  (insert-kbd-macro name)	     ; copy the macro 
-  (newline)			     ; insert a newline
-  (switch-to-buffer nil))	     ; return to the initial buffer
+  (interactive "SName of the macro :") ; ask for the name of the macro
+  (kmacro-name-last-macro name)      ; use this name for the macro
+  (find-file "~/.emacs.d/init.el")   ; open the .emacs file
+  (goto-char (point-max))      ; go to the end of the .emacs
+  (newline)          ; insert a newline
+  (insert-kbd-macro name)      ; copy the macro
+  (newline)          ; insert a newline
+  (switch-to-buffer nil))      ; return to the initial buffer
 
 (defun switch-to-terminal ()
   "Switch to terminal buffer"
@@ -314,3 +322,61 @@ open and unsaved."
             (find-file filename)
             (call-interactively command))
           (dired-get-marked-files))))
+
+;; from http://tuxicity.se/emacs/elisp/2010/11/16/delete-file-and-buffer-in-emacs.html
+(defun delete-this-buffer-and-file ()
+  "Removes file connected to current buffer and kills buffer."
+  (interactive)
+  (let ((filename (buffer-file-name))
+        (buffer (current-buffer))
+        (name (buffer-name)))
+    (if (not (and filename (file-exists-p filename)))
+        (error "Buffer '%s' is not visiting a file!" name)
+      (when (yes-or-no-p "Are you sure you want to remove this file? ")
+        (delete-file filename)
+        (kill-buffer buffer)
+        (message "File '%s' successfully removed" filename)))))
+
+;; from http://tuxicity.se/emacs/elisp/2010/03/26/rename-file-and-buffer-in-emacs.html
+(defun rename-this-buffer-and-file ()
+  "Renames current buffer and file it is visiting."
+  (interactive)
+  (let ((name (buffer-name))
+        (filename (buffer-file-name)))
+    (if (not (and filename (file-exists-p filename)))
+        (error "Buffer '%s' is not visiting a file!" name)
+      (let ((new-name (read-file-name "New name: " filename)))
+        (cond ((get-buffer new-name)
+               (error "A buffer named '%s' already exists!" new-name))
+              (t
+               (rename-file filename new-name 1)
+               (rename-buffer new-name)
+               (set-visited-file-name new-name)
+               (set-buffer-modified-p nil)
+               (message "File '%s' successfully renamed to '%s'" name (file-name-nondirectory new-name))))))))
+
+(defun untabify-buffer ()
+  (interactive)
+  (untabify (point-min) (point-max)))
+
+(defun indent-buffer ()
+  (interactive)
+  (indent-region (point-min) (point-max)))
+
+(defun cleanup-buffer-safe ()
+  "Perform a bunch of safe operations on the whitespace content of a buffer.
+Does not indent buffer, because it is used for a before-save-hook, and that
+might be bad."
+  (interactive)
+  (untabify-buffer)
+  (delete-trailing-whitespace)
+  (set-buffer-file-coding-system 'utf-8))
+
+(defun cleanup-buffer ()
+  "Perform a bunch of operations on the whitespace content of a buffer.
+Including indent-buffer, which should not be called automatically on save."
+  (interactive)
+  (cleanup-buffer-safe)
+  (indent-buffer))
+
+(global-set-key (kbd "C-c n") 'cleanup-buffer)
