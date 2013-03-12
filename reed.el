@@ -1,5 +1,5 @@
 (setq nobreak-char-display nil)
-(add-to-list 'load-path "/home/reed/.emacs.d/reed/git-emacs")
+(add-to-list 'load-path "~/.emacs.d/reed/git-emacs")
 (require 'git-emacs)
 (require 'multiple-line-edit)
 (require 'multi-term)
@@ -128,6 +128,7 @@
 (global-set-key "\C-cb" 'org-iswitchb)
 (global-set-key (kbd "C-@") 'er/expand-region)
 (global-set-key (kbd "C-0") 'ace-jump-mode)
+(global-set-key (kbd "C-x M-f") 'find-file-in-project)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
